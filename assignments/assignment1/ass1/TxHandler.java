@@ -84,6 +84,16 @@ public class TxHandler {
 
 
     private void handleTx(Transaction TX) {
-        // TODO: implement this
+        for (Transaction.Input in : TX.getInputs()) {
+            UTXO utxo = new UTXO(in.prevTxHash, in.outputIndex);
+            currentPool.removeUTXO(utxo);
+        }
+
+        ArrayList<Transaction.Output> outputs = TX.getOutputs();
+        for (int i = 0; i < outputs.size(); i++) {
+            Transaction.Output out = outputs.get(i);
+            UTXO utxo = new UTXO(TX.getHash(), i);
+            currentPool.addUTXO(utxo, out);
+        }
     }
 }
