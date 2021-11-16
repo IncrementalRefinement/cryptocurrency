@@ -1,6 +1,10 @@
 package ass1;
 
+import java.util.*;
+
 public class TxHandler {
+
+    private UTXOPool currentPool;
 
     /**
      * Creates a public ledger whose current ass1.UTXOPool (collection of unspent transaction outputs) is
@@ -9,6 +13,7 @@ public class TxHandler {
      */
     public TxHandler(UTXOPool utxoPool) {
         // IMPLEMENT THIS
+        currentPool = new UTXOPool(utxoPool);
     }
 
     /**
@@ -22,7 +27,43 @@ public class TxHandler {
      */
     public boolean isValidTx(Transaction tx) {
         // IMPLEMENT THIS
-        return false;
+        List<Transaction.Input> inputs = tx.getInputs();
+        List<Transaction.Output> outputs = tx.getOutputs();
+        double totalInputValue = 0;
+        double totalOutputValue = 0;
+        Set<UTXO> UtxoOfTX = new HashSet<>();
+
+        for (Transaction.Output output : outputs) {
+            if (output.value < 0) {
+                return false;
+            }
+            totalOutputValue += output.value;
+        }
+
+        for (Transaction.Input input : inputs) {
+            UTXO theUTXO = new UTXO(input.prevTxHash, input.outputIndex);
+            if (!currentPool.contains(theUTXO)) {
+                return false;
+            } else {
+                Transaction.Output output = currentPool.getTxOutput(theUTXO);
+                if (!Crypto.verifySignature(output.address, tx.getRawDataToSign(input.outputIndex), input.signature)) {
+                    return false;
+                }
+                if (UtxoOfTX.contains(theUTXO)) {
+                    return false;
+                } else {
+                    UtxoOfTX.add(theUTXO);
+                }
+                totalInputValue += output.value;
+            }
+        }
+
+        // TODO: might have precision bug of float here
+        if (totalInputValue != totalOutputValue) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -31,8 +72,18 @@ public class TxHandler {
      * updating the current ass1.UTXO pool as appropriate.
      */
     public Transaction[] handleTxs(Transaction[] possibleTxs) {
-        // IMPLEMENT THIS
-        return null;
+        LinkedList<Transaction> TXs = new LinkedList<>();
+        for (Transaction TX : possibleTxs) {
+            if (isValidTx(TX)) {
+                handleTx(TX);
+                TXs.add(TX);
+            }
+        }
+        return TXs.toArray(new Transaction[0]);
     }
 
+
+    private void handleTx(Transaction TX) {
+        // TODO: implement this
+    }
 }
