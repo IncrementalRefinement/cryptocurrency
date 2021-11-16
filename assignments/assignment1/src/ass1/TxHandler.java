@@ -3,7 +3,7 @@ package ass1;
 import java.util.*;
 
 public class TxHandler {
-
+    private final static double MINOR = 1e10-20;
     private UTXOPool currentPool;
 
     /**
@@ -40,13 +40,14 @@ public class TxHandler {
             totalOutputValue += output.value;
         }
 
-        for (Transaction.Input input : inputs) {
+        for (int i = 0; i < inputs.size(); i++) {
+            Transaction.Input input = inputs.get(i);
             UTXO theUTXO = new UTXO(input.prevTxHash, input.outputIndex);
             if (!currentPool.contains(theUTXO)) {
                 return false;
             } else {
                 Transaction.Output output = currentPool.getTxOutput(theUTXO);
-                if (!Crypto.verifySignature(output.address, tx.getRawDataToSign(input.outputIndex), input.signature)) {
+                if (!Crypto.verifySignature(output.address, tx.getRawDataToSign(i), input.signature)) {
                     return false;
                 }
                 if (UtxoOfTX.contains(theUTXO)) {
@@ -59,7 +60,7 @@ public class TxHandler {
         }
 
         // TODO: might have precision bug of float here
-        if (totalInputValue != totalOutputValue) {
+        if (totalInputValue < totalOutputValue) {
             return false;
         }
 

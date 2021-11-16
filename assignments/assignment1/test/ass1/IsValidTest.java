@@ -3,11 +3,11 @@ package ass1;
 // Copyright (C) 2016-2017 Enrique Albertos
 // Distributed under the GNU GPL v2 software license
 
+import org.junit.jupiter.api.Test;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-
-import org.testng.annotations.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
