@@ -89,7 +89,7 @@ public class Transaction {
 
     // a signature of one Input corresponds to the message:
     // 1. the prev Hash
-    // 2. input Index
+    // 2. output Index
     // 3. the aggregate of value and PK of each output
     public byte[] getRawDataToSign(int index) {
         // ith input and all outputs
