@@ -1,4 +1,6 @@
-package ass2;// Example of a ass2.Simulation. This test runs the nodes on a random graph.
+package ass2;
+
+// Example of a ass2.Simulation. This test runs the nodes on a random graph.
 // At the end, it will print out the ass2.Transaction ids which each node
 // believes consensus has been reached upon. You can use this simulation to
 // test your nodes. You will want to try creating some deviant nodes and
@@ -30,7 +32,7 @@ public class Simulation {
          if(Math.random() < p_malicious)
             // When you are ready to try testing with malicious nodes, replace the
             // instantiation below with an instantiation of a ass2.MaliciousNode
-            nodes[i] = new MalDoNothing(p_graph, p_malicious, p_txDistribution, numRounds);
+            nodes[i] = new MaliciousNode(p_graph, p_malicious, p_txDistribution, numRounds);
          else
             nodes[i] = new CompliantNode(p_graph, p_malicious, p_txDistribution, numRounds);
       }
